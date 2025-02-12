@@ -39,7 +39,7 @@ function NotFound() {
           <Button
             variant="primary"
             onClick={() => {
-              navigate("/");
+              navigate("/Tempo");
             }}
           >
             Go Home

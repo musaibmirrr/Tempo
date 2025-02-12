@@ -10,7 +10,7 @@ function App() {
       <Router>
         <NavbarComponent />
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/Tempo" element={<Home />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>
