@@ -52,28 +52,57 @@
   }
 }
 
-.search-bar {
-  width: 100%;
-  max-width: 200px;
-  min-width: 200px;
+@media (max-width: 768px) {
+  .search-bar {
+    width: 100%;
+  }
 }
 
 
-/* Default Light Mode */
-body[data-theme="light"] {
-  background-color: #ffffff;
-  color: #000000;
-  transition: background-color 0.3s, color 0.3s;
+/* General Table Styling */
+.custom-table {
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Dark Mode */
-body[data-theme="dark"] {
-  background-color: #121212;
-  color: #ffffff;
-  transition: background-color 0.3s, color 0.3s;
+/* Table Header */
+.custom-table thead {
+  background: linear-gradient(to right, #4f565d, #686e74); /* Gradient Blue */
+  color: white;
+  font-weight: bold;
+  text-transform: uppercase;
 }
 
-/* Button styles for light/dark mode */
-button {
-  transition: background-color 0.3s, color 0.3s;
+/* Table Body */
+.custom-table tbody tr {
+  transition: background-color 0.3s ease-in-out;
 }
+
+/* Alternating Row Colors */
+.custom-table tbody tr:nth-child(even) {
+  background-color: #f8f9fa; /* Light gray */
+}
+
+.custom-table tbody tr:nth-child(odd) {
+  background-color: #ffffff; /* White */
+}
+
+/* Hover Effect */
+.custom-table tbody tr:hover {
+  background-color: rgba(77, 79, 81, 0.15); /* Light Blue Hover */
+}
+
+/* Center Align Icon Column */
+.custom-table tbody tr td:last-child {
+  text-align: center;
+}
+
+/* No Tasks Message */
+.no-tasks {
+  font-style: italic;
+  color: #6c757d;
+}
+
+
+
