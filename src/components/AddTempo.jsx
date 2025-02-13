@@ -44,7 +44,7 @@ export default function AddTempo({}) {
       task: "",
       est: "",
       act: "",
-      status: "In Progress",
+      status: "",
     });
   };
 
