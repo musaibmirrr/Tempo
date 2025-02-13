@@ -180,11 +180,11 @@ const TableItems = ({ data }) => {
       </Modal>
 
       <tr className="table-row text-center">
-        <td data-label="DATE">{data.date}</td>
-        <td data-label="TASK">{data.task}</td>
-        <td data-label="EST HOURS">{data.est}</td>
-        <td data-label="ACT HOURS">{data.act}</td>
-        <td data-label="STATUS">{data.status}</td>
+        <td data-label="Date">{data.date}</td>
+        <td data-label="📁">{data.task}</td>
+        <td data-label="Estimated Hours">{data.est}</td>
+        <td data-label="Actual hours">{data.act}</td>
+        <td data-label="Status">{data.status}</td>
         <td className="action-buttons">
           <Button
             variant="danger"
