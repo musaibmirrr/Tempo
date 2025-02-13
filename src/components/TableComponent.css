@@ -35,6 +35,10 @@
     position: relative;
   }
 
+  .custom-table td:nth-child(2) {
+    text-align: left;
+  }
+
   .custom-table td::before {
     content: attr(data-label);
     position: absolute;
@@ -57,7 +61,6 @@
     width: 100%;
   }
 }
-
 
 /* General Table Styling */
 .custom-table {
@@ -103,8 +106,6 @@
   font-style: italic;
   color: #6c757d;
 }
-
-
 
 .back-to-top {
   position: fixed;

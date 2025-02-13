@@ -181,7 +181,7 @@ const TableItems = ({ data }) => {
 
       <tr className="table-row text-center">
         <td data-label="Date">{data.date}</td>
-        <td data-label="📁">{data.task}</td>
+        <td data-label="">{data.task}</td>
         <td data-label="Estimated Hours">{data.est}</td>
         <td data-label="Actual hours">{data.act}</td>
         <td data-label="Status">{data.status}</td>
