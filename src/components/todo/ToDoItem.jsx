@@ -39,7 +39,7 @@ export default function ToDoItem({ list, removeTodo, completeTodo }) {
         </button>
 
         <button
-          className="btn btn-outline-dark btn-sm"
+          className="btn btn-dark btn-sm"
           style={{ width: "40px", height: "30px", marginLeft: "10px" }}
           onClick={CopyText}
         >

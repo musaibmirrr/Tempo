@@ -4,9 +4,9 @@ export default function Counter({ todos, reset }) {
   let count = useRef(0);
   const [time, setTime] = useState(new Date().toLocaleTimeString());
 
-  const [day, setDay] = useState(() => {
-    return Number(localStorage.getItem("day") || 1);
-  });
+  // const [day, setDay] = useState(() => {
+  //   return Number(localStorage.getItem("day") || 1);
+  // });
 
   useEffect(() => {
     count.current = todos.filter((t) => t.isCompleted).length;
@@ -29,7 +29,7 @@ export default function Counter({ todos, reset }) {
 
     // prompt after day logic
     if (!lastSavedDate) {
-      setDay(1);
+      // setDay(1);
       localStorage.setItem("lastDate", today);
     }else{
     if (lastSavedDate !== today) {
@@ -46,11 +46,11 @@ export default function Counter({ todos, reset }) {
       }
 
       // here setDay logic
-      setDay((prevDay) => {
-        const newDay = prevDay + 1;
-        localStorage.setItem("day", newDay);
-        return newDay;
-      });
+      // setDay((prevDay) => {
+      //   const newDay = prevDay + 1;
+      //   localStorage.setItem("day", newDay);
+      //   return newDay;
+      // });
       //
       localStorage.setItem("lastDate", today);
     }
@@ -67,10 +67,9 @@ export default function Counter({ todos, reset }) {
           </span>
           /<span style={{ color: "green" }}>{todos.length}</span> Completed
         </p>
-        <span>
-          Day {day},{" "}
+        {/* <span>
           {new Date().toLocaleDateString("en-Us", { weekday: "short" })}
-        </span>
+        </span> */}
       </header>
     </>
   );
