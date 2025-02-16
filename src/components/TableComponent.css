@@ -1,6 +1,6 @@
 .table-container {
   max-width: 100%;
-  overflow-x: hidden; /* Prevents horizontal scroll */
+  overflow-x: hidden;
 }
 
 .custom-table {
@@ -129,3 +129,5 @@
 .back-to-top:focus {
   outline: none;
 }
+
+

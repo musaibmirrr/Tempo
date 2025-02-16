@@ -12,6 +12,7 @@
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
+    "@hello-pangea/dnd": "^18.0.1",
     "bcryptjs": "^2.4.3",
     "bootstrap": "^5.3.3",
     "jwt-encode": "^1.0.1",
