@@ -29,6 +29,8 @@ export default function TableComponent() {
   // Sorting & filtering tasks
   const filteredTempo = useMemo(() => {
     // Get today's date in "YYYY-MM-DD" format
+    // const today = new Date().toLocaleDateString("en-CA"); // "YYYY-MM-DD"
+
     const today = new Date().toISOString().split("T")[0];
 
     if (selectedStatus === "Today") {
