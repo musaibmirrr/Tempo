@@ -14,17 +14,17 @@ function NavbarComponent() {
             style={{ textDecoration: "none" }}
             to={"/Tempo"}
           >
-            Home
+            &gt; Home
           </NavLink>
           <NavLink
             className="text-light"
             style={{ textDecoration: "none" }}
             to={"/Tempo/DailyTasks"}
           >
-            Tasks
+            &gt; Daily
           </NavLink>
         </div>
-        <Nav className="ms-auto">
+        <Nav className="ms-auto ">
           <span className="text-light">{new Date().toDateString()}</span>
         </Nav>
       </Container>

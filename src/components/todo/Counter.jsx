@@ -61,6 +61,7 @@ export default function Counter({ todos, reset }) {
     <>
       <header className="d-flex justify-content-between mx-4 my-4 ">
         <span>{time} 🕒</span>
+        <span>My Daily Tasks</span>
         <p>
           <span style={{ color: count.current < todos.length ? "red" : "green" }}>
             {count.current}
