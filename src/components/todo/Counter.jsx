@@ -4,13 +4,8 @@ export default function Counter({ todos, reset }) {
   let count = useRef(0);
   const [time, setTime] = useState(new Date().toLocaleTimeString());
 
-  // const [day, setDay] = useState(() => {
-  //   return Number(localStorage.getItem("day") || 1);
-  // });
-
-  useEffect(() => {
-    count.current = todos.filter((t) => t.isCompleted).length;
-  }, [todos]);
+  // Directly compute the number of completed todos
+  const completedCount = todos.filter((t) => t.isCompleted).length;
 
   useEffect(() => {
     const timerId = setInterval(() => {
@@ -44,14 +39,6 @@ export default function Counter({ todos, reset }) {
           })
         );
       }
-
-      // here setDay logic
-      // setDay((prevDay) => {
-      //   const newDay = prevDay + 1;
-      //   localStorage.setItem("day", newDay);
-      //   return newDay;
-      // });
-      //
       localStorage.setItem("lastDate", today);
     }
   }
@@ -63,14 +50,11 @@ export default function Counter({ todos, reset }) {
         <span>{time} 🕒</span>
         <span>My Daily Tasks</span>
         <p>
-          <span style={{ color: count.current < todos.length ? "red" : "green" }}>
-            {count.current}
+          <span style={{ color: completedCount < todos.length ? "red" : "green" }}>
+            {completedCount}
           </span>
           /<span style={{ color: "green" }}>{todos.length}</span> Completed
         </p>
-        {/* <span>
-          {new Date().toLocaleDateString("en-Us", { weekday: "short" })}
-        </span> */}
       </header>
     </>
   );
