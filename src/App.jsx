@@ -1,22 +1,23 @@
-import "bootstrap/dist/css/bootstrap.min.css";
-import NavbarComponent from "./components/Navbar/Navbar";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./components/Home";
 import NotFound from "./components/notfound";
 import ToDoList from "./components/todo/ToDoList";
-import "./app.css"
+import CompletedTasks from "./components/CompletedTasks";
+import Layout from "./components/Layout";
+import "./App.css"
+
 function App() {
   return (
-    <>
-      <Router>
-        <NavbarComponent />
+    <Router>
+      <Layout>
         <Routes>
           <Route path="/Tempo" element={<Home />} />
           <Route path="/Tempo/DailyTasks" element={<ToDoList/>}/>
+          <Route path="/Tempo/Completed" element={<CompletedTasks />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
-      </Router>
-    </>
+      </Layout>
+    </Router>
   );
 }
 

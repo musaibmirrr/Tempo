@@ -40,41 +40,58 @@ export default function ToDoList() {
   };
 
   return (
-    <>
-      <Counter todos={todos} reset={setTodo} />
-      <ToDoForm todos={todos} setTodo={setTodo} />
+    <div className="max-w-2xl mx-auto space-y-8 animate-in fade-in duration-500">
+      <header>
+        <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-50">Daily Tasks</h1>
+        <p className="text-slate-500 dark:text-slate-400">Keep track of your quick daily todos.</p>
+      </header>
 
-      <DragDropContext onDragEnd={handleDragEnd}>
-        <Droppable droppableId="todoList">
-          {(provided) => (
-            <div {...provided.droppableProps} ref={provided.innerRef}>
-              {todos.map((t, index) => (
-                <Draggable
-                  key={t.id}
-                  draggableId={t.id.toString()}
-                  index={index}
-                >
-                  {(provided) => (
-                    <div
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                    >
-                      <ToDoItem
-                        list={t}
-                        removeTodo={() => removeTodo(t.id)}
-                        completeTodo={() => completeTodo(t.id)}
-                      />
-                    </div>
-                  )}
-                </Draggable>
-              ))}
+      <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 space-y-6">
+        <Counter todos={todos} reset={setTodo} />
+        <ToDoForm todos={todos} setTodo={setTodo} />
 
-              {provided.placeholder}
-            </div>
-          )}
-        </Droppable>
-      </DragDropContext>
-    </>
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <Droppable droppableId="todoList">
+            {(provided) => (
+              <div
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+                className="space-y-3"
+              >
+                {todos.map((t, index) => (
+                  <Draggable
+                    key={t.id}
+                    draggableId={t.id.toString()}
+                    index={index}
+                  >
+                    {(provided, snapshot) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        className={`transition-all ${snapshot.isDragging ? "scale-105 z-50" : ""}`}
+                      >
+                        <ToDoItem
+                          list={t}
+                          removeTodo={() => removeTodo(t.id)}
+                          completeTodo={() => completeTodo(t.id)}
+                        />
+                      </div>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+
+                {todos.length === 0 && (
+                  <div className="text-center py-12 text-slate-400 italic">
+                    No daily tasks yet. Add one above!
+                  </div>
+                )}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
+      </div>
+    </div>
   );
 }
