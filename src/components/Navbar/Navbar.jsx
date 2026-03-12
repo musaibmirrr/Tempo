@@ -21,7 +21,7 @@ function NavbarComponent() {
           </NavLink>
           <NavLink
             className="text-light px-2"
-            style={({ isActive }) => ({
+            style={({ isActive }) => zz({
                 textDecoration: "none",
                 borderBottom: isActive ? "2px solid white" : "none"
             })}
