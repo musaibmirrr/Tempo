@@ -6,9 +6,10 @@ import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import Row from "react-bootstrap/Row";
+import Badge from "react-bootstrap/Badge";
 
-const TableItems = ({ data }) => {
-  const { deleteTempo, handleEdit } = useContext(TempoContext);
+const TableItems = ({ data, isRow = false }) => {
+  const { deleteTempo, handleEdit, archiveTask } = useContext(TempoContext);
   const [show, setShow] = useState(false);
   const [validated, setValidated] = useState(false);
 
@@ -60,100 +61,88 @@ const TableItems = ({ data }) => {
     }));
   };
 
+  const statusVariant = {
+    "Completed ✅": "success",
+    "In Progress 🔄": "primary",
+    "Top Priority 🟩": "success",
+    "Medium Priority 🟨": "warning",
+    "Low Priority 🟥": "danger",
+  };
+
+  const content = (
+    <>
+      <td data-label="Date" className="align-middle text-muted small">{data.date}</td>
+      <td data-label="Task Details" className="align-middle fw-medium text-start ps-4">{data.task}</td>
+      <td data-label="Estimated Hours" className="align-middle">{data.est}h</td>
+      <td data-label="Actual hours" className="align-middle">{data.act}h</td>
+      <td data-label="Status" className="align-middle">
+        <Badge pill bg={statusVariant[data.status] || "secondary"} className="px-3 py-2">
+            {data.status}
+        </Badge>
+      </td>
+      <td className="action-buttons align-middle">
+        <div className="d-flex justify-content-center gap-2">
+            <Button
+                variant="outline-warning"
+                size="sm"
+                onClick={handleShow}
+                title="Edit"
+            >
+                ✏️
+            </Button>
+            <Button
+                variant="outline-success"
+                size="sm"
+                onClick={() => archiveTask(data.id)}
+                title="Archive"
+            >
+                📥
+            </Button>
+            <Button
+                variant="outline-danger"
+                size="sm"
+                onClick={() => deleteTempo(data.id)}
+                title="Delete"
+            >
+                🗑️
+            </Button>
+        </div>
+      </td>
+    </>
+  );
+
   return (
     <>
-      <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Edit Tempo</Modal.Title>
+      <Modal show={show} onHide={handleClose} size="lg" centered>
+        <Modal.Header closeButton className="bg-dark text-light">
+          <Modal.Title>Edit Tempo Task</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body className="p-4">
           <Form noValidate validated={validated} onSubmit={handleSubmit}>
-            <Row className="mb-3">
-              {/* Date Input */}
-              <Form.Group as={Col} md="4">
-                <Form.Label>Date</Form.Label>
+            <Row className="mb-4">
+              <Form.Group as={Col} md="6">
+                <Form.Label className="fw-semibold">Date</Form.Label>
                 <Form.Control
                   type="date"
                   name="date"
                   value={formData.date}
                   required
                   onChange={onChange}
+                  className="shadow-sm"
                 />
                 <Form.Control.Feedback type="invalid">
                   Date is required
                 </Form.Control.Feedback>
               </Form.Group>
 
-              {/* Task Input */}
-              <Form.Group as={Col} md="4">
-                <Form.Label>Task Details</Form.Label>
-                <Form.Control
-                  required
-                  type="text"
-                  placeholder="E.g. Bug fixes"
-                  name="task"
-                  value={formData.task}
-                  onChange={onChange}
-                  maxLength={40}
-                />
-                <Form.Text>
-                  {40 - formData.task.length} characters left
-                </Form.Text>
-                <Form.Control.Feedback type="invalid">
-                  Task cannot be empty (Max 40 chars)
-                </Form.Control.Feedback>
-              </Form.Group>
-
-              {/* Estimated Hours */}
-              <Form.Group as={Col} md="4">
-                <Form.Label>Estimated Hours</Form.Label>
-                <InputGroup>
-                  <Form.Control
-                    type="number"
-                    placeholder="E.g. 3"
-                    name="est"
-                    value={formData.est}
-                    min="1"
-                    max="24"
-                    step="0.1"
-                    required
-                    onChange={onChange}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    Enter a valid number (0-24)
-                  </Form.Control.Feedback>
-                </InputGroup>
-              </Form.Group>
-            </Row>
-
-            <Row className="mb-3">
-              {/* Actual Hours */}
               <Form.Group as={Col} md="6">
-                <Form.Label>Actual Hours</Form.Label>
-                <Form.Control
-                  type="number"
-                  name="act"
-                  value={formData.act}
-                  placeholder="E.g. 4"
-                  min="1"
-                  max="24"
-                  step="0.1"
-                  required
-                  onChange={onChange}
-                />
-                <Form.Control.Feedback type="invalid">
-                  Enter a valid number (0-24)
-                </Form.Control.Feedback>
-              </Form.Group>
-
-              {/* Status Dropdown */}
-              <Form.Group as={Col} md="6">
-                <Form.Label>Status</Form.Label>
+                <Form.Label className="fw-semibold">Status</Form.Label>
                 <Form.Select
                   name="status"
                   value={formData.status}
                   onChange={onChange}
                   required
+                  className="shadow-sm"
                 >
                   <option>In Progress 🔄</option>
                   <option>Completed ✅</option>
@@ -167,43 +156,78 @@ const TableItems = ({ data }) => {
               </Form.Group>
             </Row>
 
-            <Modal.Footer>
+            <Form.Group className="mb-4">
+              <Form.Label className="fw-semibold">Task Details</Form.Label>
+              <Form.Control
+                required
+                type="text"
+                placeholder="E.g. Task details..."
+                name="task"
+                value={formData.task}
+                onChange={onChange}
+                maxLength={40}
+                className="shadow-sm"
+              />
+              <Form.Control.Feedback type="invalid">
+                Task cannot be empty (Max 40 chars)
+              </Form.Control.Feedback>
+            </Form.Group>
+
+            <Row className="mb-2">
+              <Form.Group as={Col} md="6">
+                <Form.Label className="fw-semibold">Estimated Hours</Form.Label>
+                <InputGroup className="shadow-sm">
+                  <Form.Control
+                    type="number"
+                    placeholder="E.g. 3"
+                    name="est"
+                    value={formData.est}
+                    min="0"
+                    max="24"
+                    step="0.1"
+                    required
+                    onChange={onChange}
+                  />
+                  <InputGroup.Text>h</InputGroup.Text>
+                </InputGroup>
+              </Form.Group>
+
+              <Form.Group as={Col} md="6">
+                <Form.Label className="fw-semibold">Actual Hours</Form.Label>
+                <InputGroup className="shadow-sm">
+                  <Form.Control
+                    type="number"
+                    name="act"
+                    value={formData.act}
+                    placeholder="E.g. 4"
+                    min="0"
+                    max="24"
+                    step="0.1"
+                    required
+                    onChange={onChange}
+                  />
+                  <InputGroup.Text>h</InputGroup.Text>
+                </InputGroup>
+              </Form.Group>
+            </Row>
+
+            <Modal.Footer className="px-0 pb-0 mt-4 border-0">
               <Button variant="secondary" onClick={handleClose}>
-                Close
+                Cancel
               </Button>
-              <Button type="submit" variant="primary">
-                Save Changes
+              <Button type="submit" variant="dark" className="px-4 shadow-sm">
+                Update Task
               </Button>
             </Modal.Footer>
           </Form>
         </Modal.Body>
       </Modal>
 
-      <tr className="table-row text-center">
-        <td data-label="Date">{data.date}</td>
-        <td data-label="">{data.task}</td>
-        <td data-label="Estimated Hours">{data.est}</td>
-        <td data-label="Actual hours">{data.act}</td>
-        <td data-label="Status">{data.status}</td>
-        <td className="action-buttons">
-          <Button
-            variant="danger"
-            size="sm"
-            className="mt-1"
-            onClick={() => deleteTempo(data.id)}
-          >
-            Delete🗑️
-          </Button>
-          <Button
-            variant="warning"
-            size="sm"
-            className="ms-2 mt-1"
-            onClick={handleShow}
-          >
-            Edit✏️
-          </Button>
-        </td>
-      </tr>
+      {isRow ? content : (
+          <tr className="table-row text-center">
+              {content}
+          </tr>
+      )}
     </>
   );
 };

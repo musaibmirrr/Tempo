@@ -13,7 +13,7 @@ const TempoProvider = ({ children }) => {
     return savedArchived ? JSON.parse(savedArchived) : [];
   });
 
-  const [theme, setTheme] = useState("light");
+  const [theme, setTheme] = useState("dark");
 
   const toggleTheme = () => {
     setTheme((prevTheme) => (prevTheme === "dark" ? "light" : "dark"));

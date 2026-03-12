@@ -1,8 +1,12 @@
 import { useContext, useState, useMemo, useEffect } from "react";
+import Table from "react-bootstrap/Table";
+import Dropdown from "react-bootstrap/Dropdown";
+import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
 import { TempoContext } from "../context/Context";
 import TableItems from "./TableItems";
-import { Search, Filter, RotateCcw, ArrowUp, GripVertical } from "lucide-react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
+import "./TableComponent.css"; // Import external styles
 
 export default function TableComponent() {
   const { tempo, reorderTempo } = useContext(TempoContext);
@@ -25,7 +29,7 @@ export default function TableComponent() {
 
   const isFiltered = selectedStatus !== "All" || searchTerm !== "";
 
-  // Filtering tasks
+  // Sorting & filtering tasks
   const filteredTempo = useMemo(() => {
     const today = new Date().toISOString().split("T")[0];
 
@@ -43,8 +47,14 @@ export default function TableComponent() {
       );
     }
 
-    return result;
-  }, [tempo, selectedStatus, searchTerm]);
+    // Only auto-sort if NOT filtered (otherwise DND would be confusing)
+    if (!isFiltered) {
+        // We keep the order from the context if not filtered
+        return result;
+    } else {
+        return result.sort((a, b) => (statusPriority[a.status] || 7) - (statusPriority[b.status] || 7));
+    }
+  }, [tempo, selectedStatus, searchTerm, isFiltered]);
 
 
   // Scroll event listener
@@ -66,138 +76,106 @@ export default function TableComponent() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const onDragEnd = (result) => {
+  const handleDragEnd = (result) => {
     if (!result.destination) return;
-
-    const items = Array.from(tempo);
-    const [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
-
-    reorderTempo(items);
+    const newTempo = Array.from(tempo);
+    const [movedItem] = newTempo.splice(result.source.index, 1);
+    newTempo.splice(result.destination.index, 0, movedItem);
+    reorderTempo(newTempo);
   };
 
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden text-left">
-      {/* Search and Filter Header */}
-      <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex flex-col md:flex-row gap-4">
-        <div className="relative flex-grow">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-          <input
+    <div className="table-container p-3">
+      {/* Search, Filter, Reset Layout */}
+      <div className="row mb-3">
+        <div className="col-12 mb-2">
+          <Form.Control
             type="text"
-            placeholder="Search tasks..."
+            placeholder="🔍 Search tasks..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
+            className="search-bar"
           />
         </div>
 
-        <div className="flex gap-2">
-          <div className="relative">
-            <Filter className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-            <select
-              value={selectedStatus}
-              onChange={(e) => setSelectedStatus(e.target.value)}
-              className="pl-10 pr-8 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 appearance-none focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
-            >
-              <option value="All">All Statuses</option>
-              <option value="Today">Today</option>
-              {Object.keys(statusPriority).map((status) => (
-                <option key={status} value={status}>{status}</option>
+        <div className="col-6 text-center mb-2">
+          <Dropdown className="w-100">
+            <Dropdown.Toggle variant="secondary" className="w-100">
+              {selectedStatus === "All" ? "Filter by Status" : selectedStatus}
+            </Dropdown.Toggle>
+            <Dropdown.Menu className="w-100">
+              {["All", "Today",...Object.keys(statusPriority)].map((status, index) => (
+                <Dropdown.Item key={index} onClick={() => setSelectedStatus(status)}>
+                  {status}
+                </Dropdown.Item>
               ))}
-            </select>
-          </div>
+            </Dropdown.Menu>
+          </Dropdown>
+        </div>
 
-          <button
-            onClick={() => {
+        <div className="col-6 text-center mb-2">
+          <Button variant="secondary" className="w-100" onClick={() => {
               setSelectedStatus("All");
               setSearchTerm("");
-            }}
-            className="p-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-slate-600 dark:text-slate-400"
-            title="Reset Filters"
-          >
-            <RotateCcw size={20} />
-          </button>
+          }}>
+            Reset
+          </Button>
         </div>
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto">
-        <DragDropContext onDragEnd={onDragEnd}>
-          <table className="w-full text-left border-collapse">
+      <DragDropContext onDragEnd={handleDragEnd}>
+        <Table striped bordered hover className="custom-table">
             <thead>
-              <tr className="bg-slate-50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 text-sm uppercase tracking-wider">
-                {!isFiltered && <th className="w-10 px-6 py-4"></th>}
-                <th className="px-6 py-4 font-semibold text-left">Date</th>
-                <th className="px-6 py-4 font-semibold text-left">Task Details</th>
-                <th className="px-6 py-4 font-semibold text-left">Est. Hours</th>
-                <th className="px-6 py-4 font-semibold text-left">Act. Hours</th>
-                <th className="px-6 py-4 font-semibold text-left">Status</th>
-                <th className="px-6 py-4 font-semibold text-center">Actions</th>
-              </tr>
+            <tr className="text-center">
+                {!isFiltered && <th></th>}
+                <th>DATE</th>
+                <th>TASK DETAILS</th>
+                <th>EST HOURS</th>
+                <th>ACT HOURS</th>
+                <th>STATUS</th>
+                <th className="text-center">⚙️</th>
+            </tr>
             </thead>
-            <Droppable droppableId="tempo-table">
-              {(provided) => (
-                <tbody
-                  {...provided.droppableProps}
-                  ref={provided.innerRef}
-                  className="divide-y divide-slate-200 dark:divide-slate-800"
-                >
-                  {filteredTempo && filteredTempo.length > 0 ? (
+            <Droppable droppableId="tempoTable">
+            {(provided) => (
+                <tbody {...provided.droppableProps} ref={provided.innerRef}>
+                {filteredTempo.length > 0 ? (
                     filteredTempo.map((t, index) => (
-                      <Draggable
-                        key={t.id}
-                        draggableId={t.id}
-                        index={index}
-                        isDragDisabled={isFiltered}
-                      >
-                        {(provided, snapshot) => (
-                          <tr
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            className={`group transition-colors ${
-                              snapshot.isDragging
-                                ? "bg-slate-100 dark:bg-slate-800 shadow-md"
-                                : "hover:bg-slate-50/50 dark:hover:bg-slate-800/30"
-                            }`}
-                          >
-                            {!isFiltered && (
-                              <td className="px-6 py-4">
-                                <div
-                                  {...provided.dragHandleProps}
-                                  className="text-slate-400 hover:text-slate-600 cursor-grab active:cursor-grabbing"
+                        <Draggable key={t.id} draggableId={t.id} index={index} isDragDisabled={isFiltered}>
+                            {(provided) => (
+                                <tr
+                                    ref={provided.innerRef}
+                                    {...provided.draggableProps}
+                                    className="text-center"
                                 >
-                                  <GripVertical size={18} />
-                                </div>
-                              </td>
+                                    {!isFiltered && (
+                                        <td {...provided.dragHandleProps} style={{ cursor: 'grab' }}>
+                                            ☰
+                                        </td>
+                                    )}
+                                    <TableItems data={t} isRow={true} />
+                                </tr>
                             )}
-                            <TableItems data={t} />
-                          </tr>
-                        )}
-                      </Draggable>
+                        </Draggable>
                     ))
-                  ) : (
+                ) : (
                     <tr>
-                      <td colSpan={isFiltered ? "6" : "7"} className="px-6 py-12 text-center text-slate-500 dark:text-slate-400 italic">
-                        No tasks found matching your criteria.
-                      </td>
+                    <td colSpan={isFiltered ? "6" : "7"} className="text-center no-tasks p-4">No tasks found</td>
                     </tr>
-                  )}
-                  {provided.placeholder}
+                )}
+                {provided.placeholder}
                 </tbody>
-              )}
+            )}
             </Droppable>
-          </table>
-        </DragDropContext>
-      </div>
+        </Table>
+      </DragDropContext>
 
       {/* Back to Top Button */}
       {showBackToTop && (
-        <button
-          onClick={scrollToTop}
-          className="fixed bottom-8 right-8 p-3 rounded-full bg-primary text-primary-foreground shadow-lg hover:bg-primary/90 transition-all animate-in fade-in slide-in-from-bottom-4"
-        >
-          <ArrowUp size={24} />
-        </button>
+        <Button className="back-to-top" onClick={scrollToTop}>
+          ⬆ Back to Top
+        </Button>
       )}
     </div>
   );
