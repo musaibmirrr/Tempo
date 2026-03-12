@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
-import { Clock, CheckCircle2 } from "lucide-react";
+import { useEffect, useState, useRef } from "react";
 
 export default function Counter({ todos, reset }) {
+  let count = useRef(0);
   const [time, setTime] = useState(new Date().toLocaleTimeString());
 
   // Directly compute the number of completed todos
@@ -19,50 +19,43 @@ export default function Counter({ todos, reset }) {
     const lastSavedDate = localStorage.getItem("lastDate");
     const today = new Date().toDateString();
 
-    if (!lastSavedDate) {
-      localStorage.setItem("lastDate", today);
-    } else {
-      if (lastSavedDate !== today) {
-        let userInput = confirm(
-          "Day is over, do you wanna reset all tasks or continue?"
-        );
+    // for testing...
+    // const today = "Thu Feb 7 2025";
 
-        if (userInput) {
-          reset(
-            todos.map((t) => {
-              return { ...t, isCompleted: false };
-            })
-          );
-        }
-        localStorage.setItem("lastDate", today);
+    // prompt after day logic
+    if (!lastSavedDate) {
+      // setDay(1);
+      localStorage.setItem("lastDate", today);
+    }else{
+    if (lastSavedDate !== today) {
+      let userInput = confirm(
+        "Day is over, do you wanna reset all task or continue?"
+      );
+
+      if (userInput) {
+        reset(
+          todos.map((t) => {
+            return { ...t, isCompleted: false };
+          })
+        );
       }
+      localStorage.setItem("lastDate", today);
     }
-  }, [reset, todos]);
+  }
+  }, []);
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
-      <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400 font-medium">
-        <Clock size={18} className="text-primary" />
-        <span>{time}</span>
-      </div>
-
-      <div className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-        My Daily Progress
-      </div>
-
-      <div className="flex items-center gap-2">
-        <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-sm">
-          <CheckCircle2 size={14} className={completedCount === todos.length && todos.length > 0 ? "text-green-500" : "text-slate-400"} />
-          <span className="text-sm font-bold">
-            <span className={completedCount < todos.length ? "text-red-500" : "text-green-500"}>
-              {completedCount}
-            </span>
-            <span className="text-slate-400 mx-0.5">/</span>
-            <span className="text-green-600">{todos.length}</span>
+    <>
+      <header className="d-flex justify-content-between mx-4 my-4 ">
+        <span>{time} 🕒</span>
+        <span>My Daily Tasks</span>
+        <p>
+          <span style={{ color: completedCount < todos.length ? "red" : "green" }}>
+            {completedCount}
           </span>
-          <span className="text-[10px] text-slate-400 ml-1 font-medium">DONE</span>
-        </div>
-      </div>
-    </div>
+          /<span style={{ color: "green" }}>{todos.length}</span> Completed
+        </p>
+      </header>
+    </>
   );
 }
